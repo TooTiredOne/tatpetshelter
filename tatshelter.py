@@ -1,11 +1,17 @@
 import os
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from forms import AddForm, AdoptForm
+from profile_pic import add_profile_pic
+
+
+counter = 1
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'key'
+
+
 
 #############################
 ########## SQL DB ###########
@@ -63,7 +69,7 @@ class Pet(db.Model):
     adopted = db.Column(db.Boolean)
     owner_id = db.Column(db.Integer, db.ForeignKey('owners.id'))
     adopter_id = db.Column(db.Integer, db.ForeignKey('adopters.id'))
-    pic = db.Column(db.String(64))
+    pic = db.Column(db.String(64), nullable=False, default='default.jpg')
 
     def __init__(self, name, pet_type, age, info, owner_id):
         self.name = name
@@ -93,6 +99,7 @@ def list_pets():
 
 @app.route('/add_pet', methods=['GET', 'POST'])
 def add_pet():
+    global counter
     form = AddForm()
 
     if form.validate_on_submit():
@@ -113,8 +120,21 @@ def add_pet():
         pet_age = form.pet_age.data
         pet_info = form.additional.data
         pet = Pet(pet_name, pet_type, pet_age, pet_info, owner.id)
+
+        print(form.pet_pic.data, flush=True)
+        if form.pet_pic.data:
+            pic = add_profile_pic(form.pet_pic.data, counter)
+            print('enter getJSONReuslt', flush=True)
+        else:
+            pic = 'default.jpg'
+            print('Sad', flush=True)
+
+        pet.pic = pic
+
         db.session.add_all([pet, owner])
         db.session.commit()
+
+        counter += 1
 
         return redirect(url_for('list_pets'))
     

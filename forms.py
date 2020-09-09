@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, TextAreaField
-from wtforms.validators import InputRequired, NumberRange
+from wtforms.validators import InputRequired, NumberRange, Optional
+from flask_wtf.file import FileAllowed, FileField
 
 class AddForm(FlaskForm):
 
@@ -11,6 +12,7 @@ class AddForm(FlaskForm):
     owner_name = StringField('Owner name: ', [InputRequired(message="Please, provide owner name")])
     owner_email = StringField('Contact email: ', [InputRequired(message="Please, provide owner contact email")])
     owner_phone = StringField('Phone number: ', [InputRequired(message="Please, provide owner contact phone")])
+    pet_pic = FileField('Upload Picture', validators=[FileAllowed(['jpg', 'png', 'jpeg']), Optional()])
     submit = SubmitField('Add pet')
 
 class AdoptForm(FlaskForm):

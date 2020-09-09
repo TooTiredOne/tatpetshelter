@@ -1,7 +1,7 @@
 {%extends "base.html"%}
 {%block content%} 
 
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <div class="jumbotron" style="width: 800px; margin: 0 auto;">
       <div class="form-group">
@@ -17,6 +17,7 @@
         {{ form.owner_name.label }}{{ form.owner_name(class="form-control") }}
         {{ form.owner_email.label }}{{ form.owner_email(class="form-control") }}
         {{ form.owner_phone.label }}{{ form.owner_phone(class="form-control") }}
+        {{ form.pet_pic.label }}{{ form.pet_pic(class="form-control-file") }}
         {{ form.submit()}}
       </div>
     </div>
