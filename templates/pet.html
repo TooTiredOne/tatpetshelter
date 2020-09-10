@@ -1,3 +1,69 @@
 {%extends "base.html"%}
 {%block content%} 
+<div class="jumbotron" style="width: 800px; margin: 20px auto;">
+
+  <h2 class="display-6" style="text-align: center; margin-bottom: 20px;">Information about a pet and its owner</h2>
+  <div class="d-flex" style="width: 90%;">
+    <!-- Pet Info -->
+    <div>
+      <div class='image' style="margin: 10px 20px;">
+        <img src="../static/{{pet.pic}}">
+      </div>
+      
+      <div class="d-flex flex-column" style="margin: 5px 20px;">
+        <h1 class="display-7">{{pet.name}}</h1>
+        <hr class="my-1">
+        <p>{{pet.age}} years old</p>
+        <p>{{pet.info}}</p>
+      </div>
+    </div>
+
+    <!-- Owner Info -->
+    <div class="d-flex flex-column">
+      <div class="d-flex align-items-center" style="margin: 20px 10px;">
+        <div class="btn btn-primary disabled" style="margin: 10px 10px;">Owner's name:</div>
+        <div class="btn btn-warning disabled">{{owner.full_name}}</div>
+      </div>
+
+      <div class="d-flex align-items-center" style="margin: 20px 10px;">
+        <div class="btn btn-primary disabled" style="margin: 10px 10px;">Owner's email:</div>
+        <div class="btn btn-warning disabled">{{owner.email}}</div>
+      </div>
+
+      <div class="d-flex align-items-center" style="margin: 20px 10px;">
+        <div class="btn btn-primary disabled" style="margin: 10px 10px;">Owner's phone:</div>
+        <div class="btn btn-warning disabled">{{owner.phone_number}}</div>
+      </div>
+    </div>
+    
+
+    
+  </div>
+</div>
+
+<!--Adopter Form-->
+
+<div class="jumbotron jumbotron-fluid" style="width: 800px; margin: 20px auto;">
+  <h2 class="display-6" style="text-align: center; margin-bottom: 20px;">Adoption Form</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="jumbotron" style="width: 800px; margin: 0 auto;">
+          <div class="form-group">
+            {{ form.name.label(class="form-group") }}
+            {{ form.name(class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.email.label(class="form-group") }}
+            {{ form.email(class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.phone.label(class="form-group") }}
+            {{ form.phone(class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.submit(class="form-control btn btn-primary") }}
+          </div>
+        </div>
+      </form>
+</div>
 {% endblock %}

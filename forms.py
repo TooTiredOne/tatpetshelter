@@ -19,4 +19,4 @@ class AdoptForm(FlaskForm):
     name = StringField('Adopter name: ', [InputRequired(message="Please, provide adopter name")])
     email = StringField('Contact email: ', [InputRequired(message="Please, provide adopter contact email")])
     phone = StringField('Phone number: ', [InputRequired(message="Please, provide adopter contact phone")])
-    submit = SubmitField('Adopt a pet')
+    submit = SubmitField('Adopt that pet')

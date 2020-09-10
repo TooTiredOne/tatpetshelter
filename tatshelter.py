@@ -1,12 +1,9 @@
 import os
-from flask import Flask, render_template, url_for, redirect, current_app
+from flask import Flask, render_template, url_for, redirect, current_app, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from forms import AddForm, AdoptForm
 from profile_pic import add_profile_pic
-
-
-counter = 1
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'key'
@@ -94,12 +91,11 @@ def index():
 
 @app.route('/list_pets')
 def list_pets():
-    pets = Pet.query.all()
+    pets = Pet.query.filter_by(adopted=False).all()
     return render_template('list_pets.html', pets = pets)
 
 @app.route('/add_pet', methods=['GET', 'POST'])
 def add_pet():
-    global counter
     form = AddForm()
 
     if form.validate_on_submit():
@@ -108,6 +104,7 @@ def add_pet():
         owner_email = form.owner_email.data
         owner_phone = form.owner_phone.data
         owner = Owner.query.filter_by(email=owner_email).first()
+
         if owner is None:
             owner = Owner(owner_name, owner_email, owner_phone)
             db.session.add(owner)
@@ -121,20 +118,22 @@ def add_pet():
         pet_info = form.additional.data
         pet = Pet(pet_name, pet_type, pet_age, pet_info, owner.id)
 
-        print(form.pet_pic.data, flush=True)
+        id = Pet.query.order_by(Pet.id).all()
+
+        if len(id) == 0:
+            id = 1
+        else:
+            id = id[-1].id + 1
+
         if form.pet_pic.data:
-            pic = add_profile_pic(form.pet_pic.data, counter)
-            print('enter getJSONReuslt', flush=True)
+            pic = add_profile_pic(form.pet_pic.data, id)
         else:
             pic = 'default.jpg'
-            print('Sad', flush=True)
 
         pet.pic = pic
-
+        
         db.session.add_all([pet, owner])
         db.session.commit()
-
-        counter += 1
 
         return redirect(url_for('list_pets'))
     
@@ -143,8 +142,9 @@ def add_pet():
 @app.route('/pet/<pet_id>', methods=['GET', 'POST'])
 def pet(pet_id):
     pet_id = int(pet_id)
-    pet = Pet.query.get(pet_id).first()
+    pet = Pet.query.get(pet_id)
 
+    owner = Owner.query.get(pet.owner_id)
     form = AdoptForm()
 
     if form.validate_on_submit():
@@ -162,9 +162,14 @@ def pet(pet_id):
         db.session.add_all([adopter, pet])
         db.session.commit()
 
-        return redirect(url_for('list_pets'))
+        session['name'] = pet.name
 
-    return render_template('pet.html', form=form, pet=pet)
+        return redirect(url_for('thankyou', pet_name=pet.name))
 
+    return render_template('pet.html', form=form, pet=pet, owner=owner)
+
+@app.route('/thankyou')
+def thankyou():
+    return render_template('thankyou.html', name=session['name'])
 if __name__ == '__main__':
     app.run(debug=True)
