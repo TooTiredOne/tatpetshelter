@@ -171,5 +171,6 @@ def pet(pet_id):
 @app.route('/thankyou')
 def thankyou():
     return render_template('thankyou.html', name=session['name'])
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
